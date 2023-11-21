@@ -24,6 +24,17 @@ class FileStorage:
             for key, val in temp.items():
                 temp[key] = val.to_dict()
             json.dump(temp, f)
+     def delete(self, obj=None):
+        """loop through __objects, compare each value
+        of key with cls argument wich is object
+        """
+        if obj:
+            id = obj.to_dict()["id"]
+            className = obj.to_dict()["__class__"]
+            keyName = className+"."+id
+            if keyName in FileStorage.__objects:
+                del (FileStorage.__objects[keyName])
+                self.save()
 
     def reload(self):
         """Loads storage dictionary from file"""
