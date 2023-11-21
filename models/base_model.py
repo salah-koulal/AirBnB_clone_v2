@@ -6,6 +6,14 @@ from datetime import datetime
 
 class BaseModel:
     """A base class for all hbnb models"""
+    id = Column(String(60), primary_key=True,
+                nullable=False, unique=True)
+    created_at = Column(DateTime, nullable=False,
+                        default=datetime.datetime.utcnow)
+    updated_at = Column(DateTime, nullable=False,
+                        default=datetime.datetime.utcnow,
+                        onupdate=datetime.datetime.utcnow)
+
     def __init__(self, *args, **kwargs):
         """Instatntiates a new model"""
         if not kwargs:
@@ -41,4 +49,9 @@ class BaseModel:
                           (str(type(self)).split('.')[-1]).split('\'')[0]})
         dictionary['created_at'] = self.created_at.isoformat()
         dictionary['updated_at'] = self.updated_at.isoformat()
+        if '_sa_instance_state' in dictionary:
+            del dictionary['_sa_instance_state']
         return dictionary
+    def delete(self):
+        """Docs"""
+        models.storage.delete(self)
