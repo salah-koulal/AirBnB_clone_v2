@@ -342,5 +342,54 @@ class HBNBCommand(cmd.Cmd):
         print("Updates an object with new information")
         print("Usage: update <className> <id> <attName> <attVal>\n")
 
+    @classmethod
+    def verify_attribute(cls, attribute):
+        """Verifies that an attribute is correctly formatted.
+
+        Args:
+            attribute (any): Attribute to be verified.
+
+        Returns:
+            any: Verified attribute.
+        """
+        if cls.is_quoted_string(attribute):
+            return cls.process_quoted_string(attribute)
+        else:
+            return cls.process_numeric_attribute(attribute)
+
+    @classmethod
+    def is_quoted_string(cls, attribute):
+        """Check if the attribute is a quoted string."""
+        return len(attribute) >= 2 and attribute[0] == attribute[-1] == '"'
+
+    @classmethod
+    def process_quoted_string(cls, attribute):
+        """Process a quoted string attribute."""
+        for i, c in enumerate(attribute[1:-1]):
+            if c == '"' and attribute[i] != '\\':
+                return None
+            if c == " ":
+                return None
+        return attribute.strip('"').replace('_', ' ').replace('\\"', '"')
+
+    @classmethod
+    def process_numeric_attribute(cls, attribute):
+        """Process a numeric attribute (int or float)."""
+        flag = 0
+        allowed_chars = "0123456789.-"
+
+        for c in attribute:
+            if c not in allowed_chars:
+                return None
+            if c == '.' and flag == 1:
+                return None
+            elif c == '.' and flag == 0:
+                flag = 1
+
+        if flag == 1:
+            return float(attribute)
+        else:
+            return int(attribute)
+
 if __name__ == "__main__":
     HBNBCommand().cmdloop()
