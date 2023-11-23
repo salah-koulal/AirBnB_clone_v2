@@ -114,39 +114,27 @@ class HBNBCommand(cmd.Cmd):
         pass
 
     def do_create(self, args):
-        """Create an object of any class
-
-        Command syntax: create <Class name> <param 1> <param 2> <param 3>...
-        Param syntax: <key name>=<value>
+        """developed a new instance of BaseModel, saves it
+        Exceptions:
+            SyntaxError: when there is no args given
+            NameError: when there is no object taht has the name
         """
         try:
             if not args:
-                raise SyntaxError("** class name missing **")
-
-            class_name, *param_strings = args.split()
-            obj = self.create_object(class_name, param_strings)
+                raise SyntaxError()
+            my_list = args.split(" ")
+            obj = eval("{}()".format(my_list[0]))
+            for element in my_list[1:]:
+                key, val = element.split('=')
+                val = val.replace('_', ' ')
+                if hasattr(obj, key):
+                    setattr(obj, key, eval(val))
             obj.save()
             print("{}".format(obj.id))
-
-        except SyntaxError as e:
-            print(str(e))
+        except SyntaxError:
+            print("** class name missing **")
         except NameError:
             print("** class doesn't exist **")
-
-    def create_object(self, class_name, param_strings):
-        """Create an object of the specified class with the given parameters."""
-        obj = eval("{}()".format(class_name))
-
-        for param_string in param_strings:
-            key, value = param_string.split('=')
-            try:
-                casted = HBNBCommand.verify_attribute(value)
-            except Exception:
-                continue
-            if not casted:
-                continue
-            setattr(obj, key, casted)
-        return obj
 
     def help_create(self):
         """ Help information for the create method """
@@ -341,55 +329,6 @@ class HBNBCommand(cmd.Cmd):
         """ Help information for the update class """
         print("Updates an object with new information")
         print("Usage: update <className> <id> <attName> <attVal>\n")
-
-    @classmethod
-    def verify_attribute(cls, attribute):
-        """Verifies that an attribute is correctly formatted.
-
-        Args:
-            attribute (any): Attribute to be verified.
-
-        Returns:
-            any: Verified attribute.
-        """
-        if cls.is_quoted_string(attribute):
-            return cls.process_quoted_string(attribute)
-        else:
-            return cls.process_numeric_attribute(attribute)
-
-    @classmethod
-    def is_quoted_string(cls, attribute):
-        """Check if the attribute is a quoted string."""
-        return len(attribute) >= 2 and attribute[0] == attribute[-1] == '"'
-
-    @classmethod
-    def process_quoted_string(cls, attribute):
-        """Process a quoted string attribute."""
-        for i, c in enumerate(attribute[1:-1]):
-            if c == '"' and attribute[i] != '\\':
-                return None
-            if c == " ":
-                return None
-        return attribute.strip('"').replace('_', ' ').replace('\\"', '"')
-
-    @classmethod
-    def process_numeric_attribute(cls, attribute):
-        """Process a numeric attribute (int or float)."""
-        flag = 0
-        allowed_chars = "0123456789.-"
-
-        for c in attribute:
-            if c not in allowed_chars:
-                return None
-            if c == '.' and flag == 1:
-                return None
-            elif c == '.' and flag == 0:
-                flag = 1
-
-        if flag == 1:
-            return float(attribute)
-        else:
-            return int(attribute)
 
 if __name__ == "__main__":
     HBNBCommand().cmdloop()
