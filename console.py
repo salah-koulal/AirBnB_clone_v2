@@ -14,6 +14,7 @@ Your code should not be executed when imported
 import cmd
 import re
 from models import storage
+from models.base_model import BaseModel
 
 
 class HBNBCommand(cmd.Cmd):
