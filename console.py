@@ -15,6 +15,12 @@ import cmd
 import re
 from models import storage
 from models.base_model import BaseModel
+from models.user import User
+from models.place import Place
+from models.state import State
+from models.city import City
+from models.amenity import Amenity
+from models.review import Review
 
 
 class HBNBCommand(cmd.Cmd):
@@ -25,7 +31,11 @@ class HBNBCommand(cmd.Cmd):
     """
 
     prompt = '(hbnb) '
-
+    classes = {
+               'BaseModel': BaseModel, 'User': User, 'Place': Place,
+               'State': State, 'City': City, 'Amenity': Amenity,
+               'Review': Review
+              }
     def do_quit(self, line):
         """Quit command to exit the program
         """
@@ -53,7 +63,7 @@ class HBNBCommand(cmd.Cmd):
             if not line:
                 raise SyntaxError()
             my_list = line.split(" ")
-            obj = eval("{}()".format(my_list[0]))
+            obj= HBNBCommand.classes[my_list[0]]()
             for element in my_list[1:]:
                 key, val = element.split('=')
                 val = val.replace('_', ' ')
