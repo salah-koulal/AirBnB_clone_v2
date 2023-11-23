@@ -12,14 +12,10 @@ from sqlalchemy.orm import relationship
 place_amenity = Table('place_amenity', Base.metadata,
                       Column('place_id',
                              String(60),
-                             ForeignKey('places.id'),
-                             nullable=False,
-                             primary_key=True),
+                             ForeignKey('places.id')),
                       Column('amenity_id',
                              String(60),
-                             ForeignKey('amenities.id'),
-                             nullable=False,
-                             primary_key=True))
+                             ForeignKey('amenities.id')))
 
 
 class Place(BaseModel, Base):
@@ -52,11 +48,11 @@ class Place(BaseModel, Base):
     amenity_ids = []
     reviews = relationship("Review", backref="place", cascade="all, delete")
     amenities = relationship("Amenity", secondary=place_amenity, viewonly=False)
+
     if os.getenv('HBNB_TYPE_STORAGE') != 'db':
         @property
         def reviews(self):
             """returns the list of Review instances"""
-
             review_list = []
             objs_ = models.storage.all(Review)
             for key, value in objs_.items():
@@ -67,7 +63,6 @@ class Place(BaseModel, Base):
         @property
         def amenities(self):
             """returns the list of Amenities instances"""
-
             amenity_list = []
             objs_ = models.storage.all(Amenity)
             for key, value in objs_.items():

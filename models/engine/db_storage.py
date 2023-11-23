@@ -23,75 +23,68 @@ class DBStorage:
     __session = None
 
     def __init__(self):
-        """Initializes new instances of DBStorage.
-        """
-        try:
-            user = os.environ.get('HBNB_MYSQL_USER')
-            password = os.environ.get('HBNB_MYSQL_PWD')
-            host = os.environ.get('HBNB_MYSQL_HOST')
-            db = os.environ.get('HBNB_MYSQL_DB')
-            env = os.environ.get('HBNB_ENV')
-            attributes = [user, password, host, db]
-            for attribute in attributes:
-                if attribute is None:
-                    print("Missing attributes env var")
-
-            conn_str = "mysql+mysqldb://{}:{}@{}/{}".format(
-                user, password, host, db)
-            # create engine and session object with connection string
-            self.__engine = create_engine(conn_str, pool_pre_ping=True)
-
-            # drop all tables in DB if test env
-            if env == 'test':
-                Base.metadata.drop_all(bind=self.__engine, checkfirst=True)
-        except Exception as E:
-            print("raised exception in init")
-            print(E)
+        """Initializes the SQL database storage"""
+        user = os.getenv('HBNB_MYSQL_USER')
+        pword = os.getenv('HBNB_MYSQL_PWD')
+        host = os.getenv('HBNB_MYSQL_HOST')
+        db_name = os.getenv('HBNB_MYSQL_DB')
+        env = os.getenv('HBNB_ENV')
+        DATABASE_URL = "mysql+mysqldb://{}:{}@{}/{}".format(
+            user, pword, host, db_name
+        )
+        self.__engine = create_engine(
+            DATABASE_URL,
+            pool_pre_ping=True
+        )
+        if env == 'test':
+            Base.metadata.drop_all(self.__engine)
 
     def all(self, cls=None):
-        """show all the instances"""
-        instances = {}
+        """Returns a dictionary of models currently in storage"""
+        objects = dict()
+        all_classes = (User, State, City, Amenity, Place, Review)
         if cls is None:
-            all_cls = ["State", "City", "User", "Place", "Review", "Amenity"]
-
-            for cl in all_cls:
-                objs = self.__session.query(eval(cl))
-                for obj in objs:
-                    key = "{}.{}".format(type(obj).__name__, obj.id)
-                    instances[key] = obj
+            for class_type in all_classes:
+                query = self.__session.query(class_type)
+                for obj in query.all():
+                    obj_key = '{}.{}'.format(obj.__class__.__name__, obj.id)
+                    objects[obj_key] = obj
         else:
-            objs = self.__session.query(cls).all()
-            for obj in objs:
-                key = "{}.{}".format(type(obj).__name__, obj.id)
-                instances[key] = obj
-        return instances
+            query = self.__session.query(cls)
+            for obj in query.all():
+                obj_key = '{}.{}'.format(obj.__class__.__name__, obj.id)
+                objects[obj_key] = obj
+        return objects
 
     def new(self, obj):
-        """add an object into the database"""
-        if obj and self.__session:
-            self.__session.add(obj)
+        """Adds new object to storage database"""
+        if obj is not None:
+            try:
+                self.__session.add(obj)
+                self.__session.flush()
+                self.__session.refresh(obj)
+            except Exception as ex:
+                self.__session.rollback()
+                raise ex
 
     def save(self):
         """commit all changes of the current database session"""
-        if self.__session:
-            self.__session.commit()
+        self.__session.commit()
 
     def delete(self, obj=None):
         """ delete from the current database session"""
-        try:
-            self.__session.delete(obj)
-        except Exception:
-            pass
+        if obj is not None:
+            self.__session.query(type(obj)).filter(
+                type(obj).id == obj.id).delete(
+                synchronize_session=False
+            )
 
     def reload(self):
         """ reload all the objs"""
-        try:
-            Base.metadata.create_all(self.__engine)
-            Session = scoped_session(sessionmaker(
-                bind=self.__engine, expire_on_commit=False))
-            self.__session = Session()
-        except Exception as Err:
-            print(Err)
+        Base.metadata.create_all(self.__engine)
+        Session = scoped_session(sessionmaker(
+            bind=self.__engine, expire_on_commit=False))
+        self.__session = Session()
 
     def close(self):
         """Close session"""

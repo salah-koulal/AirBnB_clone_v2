@@ -121,7 +121,7 @@ class HBNBCommand(cmd.Cmd):
             all_instances = list(storage.all().values())
         else:
             class_name = args[0]
-            if class_name not in storage.classes():
+            if class_name not in self.classes:
                 print("** class doesn't exist **")
                 return
             all_instances = [value for key, value in storage.all().items()
