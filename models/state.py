@@ -11,11 +11,10 @@ storage_type = getenv("HBNB_TYPE_STORAGE")
 
 class State(BaseModel, Base):
     """ State class """
-
-    __tablename__ = 'states'
     if storage_type == "db":
+        __tablename__ = 'states'
         name = Column(String(128), nullable=False)
-        cities = relationship('City', cascade="all,delete", backref="state")
+        cities = relationship('City', cascade="all,delete-orphan", backref="state", passive_deletes=True)
     else:
         name = ""
         # DONE: for FileStorage: getter attribute cities that
@@ -23,6 +22,7 @@ class State(BaseModel, Base):
         # to the current State.id => It will be the FileStorage
         # relationship between State and City
 
+    if storage_type != 'db':
         @property
         def cities(self):
             """getter docuemnt"""
