@@ -9,24 +9,22 @@ from os import getenv
 
 storage_type = getenv("HBNB_TYPE_STORAGE")
 
-place_amenity = Table(
-    "place_amenity",
-    Base.metadata,
-    Column(
-        "place_id",
-        String(60),
-        ForeignKey("places.id"),
-        primary_key=True,
-        nullable=False,
-    ),
-    Column(
-        "amenity_id",
-        String(60),
-        ForeignKey("amenities.id"),
-        primary_key=True,
-        nullable=False,
-    ),
-)
+if storage_type == 'db':
+    place_amenity = Table("place_amenity",Base.metadata,
+                    Column(
+                        "place_id",
+                        String(60),
+                        ForeignKey("places.id", ondelete='CASCADE'),
+                        primary_key=True,
+                        nullable=False,
+                    ),
+                    Column(
+                        "amenity_id",
+                        String(60),
+                        ForeignKey("amenities.id", ondelete='CASCADE'),
+                        primary_key=True,
+                        nullable=False,
+                    ))
 
 
 class Place(BaseModel, Base):

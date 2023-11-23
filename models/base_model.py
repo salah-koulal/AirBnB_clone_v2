@@ -6,12 +6,15 @@ import datetime
 
 from sqlalchemy import Column, String, ForeignKey, DateTime
 from sqlalchemy.ext.declarative import declarative_base
+from os import environ
+
+if environ.get('HBNB_TYPE_STORAGE') == 'db':
+    Base = declarative_base()
+else:
+    Base = object
 
 
-Base = declarative_base()
-
-
-class BaseModel(Base):
+class BaseModel:
     """A base class for all hbnb models"""
     id = Column(String(60), primary_key=True,nullable=False)
     created_at = Column(DateTime, nullable=False,default=datetime.datetime.utcnow)
@@ -28,9 +31,9 @@ class BaseModel(Base):
                 elif key != "__class__":
                     setattr(self, key, value)
         if not flag_created_at:
-            self.created_at = datetime.now()
+            self.created_at = datetime.datetime.now()
         if not updated_set:
-            self.updated_at = datetime.now()
+            self.updated_at = datetime.datetime.now()
         self.id = str(uuid.uuid4())
 
     def __str__(self):
