@@ -11,13 +11,6 @@ from datetime import datetime
 env.hosts = ['100.26.214.3', '54.165.188.189']
 env.user = 'ubuntu'
 
-#!/usr/bin/python3
-"""
-file to practice use of Fabric
-"""
-from fabric.api import *
-from datetime import datetime
-
 
 def do_pack():
     """ generates a .tgz archive from the contents of the web_static
@@ -41,7 +34,8 @@ def do_pack():
         return ("versions/web_static_{}.tgz".format(timestr))
     except BaseException:
         return None
-    
+
+
 def do_deploy(archive_path):
     """distributes an archive to your web servers.
 
@@ -84,4 +78,3 @@ def do_deploy(archive_path):
         return True
     except Exception:
         return False
-
