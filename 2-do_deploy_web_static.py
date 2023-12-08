@@ -8,8 +8,15 @@ from fabric.operations import run, put, sudo
 from datetime import datetime
 
 
-env.hosts = ['52.90.98.156', '52.207.85.204']
+env.hosts = ['100.26.214.3', '54.165.188.189']
 env.user = 'ubuntu'
+
+#!/usr/bin/python3
+"""
+file to practice use of Fabric
+"""
+from fabric.api import *
+from datetime import datetime
 
 
 def do_pack():
@@ -30,13 +37,11 @@ def do_pack():
         # create folder versions if it doesn’t exist
         local("mkdir -p versions")
         # extract the contents of a tar archive
-        result = local("tar -cvzf versions/\
-                       web_static_{}.tgz web_static/".format(timestr))
-        return result
-    except Exception:
+        local(f"tar -cvzf versions/web_static_{timestr}.tgz web_static/")
+        return ("versions/web_static_{}.tgz".format(timestr))
+    except BaseException:
         return None
-
-
+    
 def do_deploy(archive_path):
     """distributes an archive to your web servers.
 
