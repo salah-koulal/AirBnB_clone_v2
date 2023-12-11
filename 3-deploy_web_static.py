@@ -3,7 +3,7 @@ from fabric.api import *
 from datetime import datetime
 import os.path
 from fabric.operations import run, put, sudo
-from datetime import datetime 
+from datetime import datetime
 
 env.hosts = ['100.26.214.3', '54.165.188.189']
 env.user = 'ubuntu'
@@ -31,6 +31,8 @@ def do_pack():
         return ("versions/web_static_{}.tgz".format(timestr))
     except BaseException:
         return None
+
+
 def do_deploy(archive_path):
     """distributes an archive to your web servers.
 
@@ -73,6 +75,8 @@ def do_deploy(archive_path):
         return True
     except Exception:
         return False
+
+
 def deploy():
     """creates and distributes an archive to your web servers
 
