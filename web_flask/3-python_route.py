@@ -23,6 +23,7 @@ def printC(text):
 @app.route('/python/', defaults={'text': 'is cool'}, strict_slashes=False)
 @app.route("/python/<text>", strict_slashes=False)
 def PrintPy(text):
+    """Display Python slag"""
     modified_text = text.replace("_"," ")
     return "Python {}".format(modified_text)
 
