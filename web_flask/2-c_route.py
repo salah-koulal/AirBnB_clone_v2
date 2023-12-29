@@ -19,7 +19,7 @@ def hbnb():
 
 @app.route("/c/<text>",  strict_slashes=False)
 def printC(text):
-    """display slag"""
+    """display Ctext"""
     return "C {}".format(text.replace("_", " "))
 
 
