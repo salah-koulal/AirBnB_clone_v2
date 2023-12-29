@@ -51,11 +51,9 @@ def OddEven(n):
         parity = 'odd'
     return render_template(
         "6-number_odd_or_even.html",
-        number = n ,
-        p = parity
+        number=n,
+        p=parity
     )
-        
-
 
 
 if __name__ == "__main__":
