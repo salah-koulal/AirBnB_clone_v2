@@ -1,45 +1,40 @@
 #!/usr/bin/python3
-"""doc flask"""
-from flask import Flask, render_template
+""" module doc """
+from flask import Flask
+from flask import render_template
 
 app = Flask(__name__)
 
 
 @app.route("/", strict_slashes=False)
 def hello():
-    """start flask"""
+    """ def doc """
     return "Hello HBNB!"
 
 
 @app.route("/hbnb", strict_slashes=False)
 def hbnb():
-    """start flask"""
+    """ def doc """
     return "HBNB"
 
 
-@app.route("/c/<text>", strict_slashes=False)
-def printC(text):
-    """Display CText"""
-    return "C {}".format(text.replace("_", " "))
+@app.route('/c/<text>', strict_slashes=False)
+def c(text):
+    """ def doc """
+    return 'c {}'.format(text.replace("_", " "))
 
 
-@app.route('/python/', defaults={'text': 'is cool'}, strict_slashes=False)
-@app.route("/python/<text>", strict_slashes=False)
-def PrintPy(text):
-    """Display Python slag"""
-    modified_text = text.replace("_", " ")
-    return "Python {}".format(modified_text)
+@app.route('/python', defaults={'text': 'is cool'}, strict_slashes=False)
+@app.route('/python/<text>', strict_slashes=False)
+def python(text):
+    """ def doc """
+    return 'Python {}'.format(text.replace("_", " "))
 
 
-@app.route("/number/<int:n>", strict_slashes=False)
-def OnlyNum(n):
-    return "{} is a number".format(n)
-
-
-@app.route('/number_template/<int:n>', strict_slashes=False)
-def number_template(n):
-    """display slag number template"""
-    return render_template('5-number.html', number=n)
+@app.route('/number/<int:n>', strict_slashes=False)
+def number(n):
+    """ def doc """
+    return '{} is a number'.format(n)
 
 
 @app.route('/number_odd_or_even/<int:n>', strict_slashes=False)
