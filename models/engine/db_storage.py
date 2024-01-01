@@ -58,7 +58,8 @@ class DBStorage:
                     obj_key = '{}.{}'.format(obj.__class__.__name__, obj.id)
                     objects[obj_key] = obj
         else:
-            cls = classes[cls] if cls in classes else cls
+            if isinstance(cls,str):
+                cls = classes[cls] if cls in classes else cls
             query = self.__session.query(cls)
             for obj in query.all():
                 obj_key = '{}.{}'.format(obj.__class__.__name__, obj.id)
