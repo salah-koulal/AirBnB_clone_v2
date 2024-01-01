@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 """AirBnB cloned v2 data storage class"""
 import os
 from models.base_model import BaseModel, Base
@@ -11,7 +11,15 @@ from models.review import Review
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
 
-
+classes = {
+    "BaseModel" : BaseModel,
+    "User" : User,
+    "State" : State,
+    "City" : City,
+    "Place" : Place,
+    "Review" : Review,
+    "Amenity" : Amenity
+}
 class DBStorage:
     """This class save instances to a mysql db and
     get instances from the db
@@ -50,6 +58,7 @@ class DBStorage:
                     obj_key = '{}.{}'.format(obj.__class__.__name__, obj.id)
                     objects[obj_key] = obj
         else:
+            cls = classes[cls] if cls in classes else cls
             query = self.__session.query(cls)
             for obj in query.all():
                 obj_key = '{}.{}'.format(obj.__class__.__name__, obj.id)
