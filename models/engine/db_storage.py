@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
 """AirBnB cloned v2 data storage class"""
 import os
 from models.base_model import BaseModel, Base
