@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 """Contains the entry point of the command interpreter.
 
 You must use the module cmd.
